@@ -1,4 +1,5 @@
 import React from 'react';
+import { Route } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Title from './Title';
@@ -9,6 +10,9 @@ import TableRow from '@material-ui/core/TableRow';
 import TableHead from '@material-ui/core/TableHead';
 import axios from 'axios';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import { Edit, DeleteForever} from '@material-ui/icons';
+import DeleteInvoiceModal from './DeleteInvoiceModal';
 
 class InvoiceDetail extends React.Component {
     constructor(props) {
@@ -32,8 +36,8 @@ class InvoiceDetail extends React.Component {
             invoice.totalBrutto = 0;
             invoice.totalNetto = 0;
             invoice.items.map(item => {
-                item.totalBrutto = item.qty * item.unitPriceNet;
-                item.totalNetto = item.totalBrutto * (1 + item.taxRate);
+                item.totalNetto = item.qty * item.unitPriceNet;
+                item.totalBrutto = item.totalNetto * (1 - item.taxRate);
                 invoice.totalBrutto += item.totalBrutto;
                 invoice.totalNetto += item.totalNetto;
                 invoice.taxRate = item.taxRate;
@@ -41,15 +45,47 @@ class InvoiceDetail extends React.Component {
             this.setState({
                 invoice: invoice
             })
-            console.log(invoice);
+        })
+    }
+    saveButtonClicked() {
+        this.handlerForButtonClicked = this.handlerForButtonClicked.bind(this);
+        this.setState({
+            buttonClicked: true
+        });
+    }
+    handlerForButtonClicked(value) {
+        this.setState({
+            buttonClicked: value
         })
     }
     render() {
         return (
             <Grid container spacing={3}>
+                <div id="modalContainer">
+                    { (this.state.buttonClicked) ? <DeleteInvoiceModal handler={this.handlerForButtonClicked} invoice={this.state.invoice} open={true}/> : false }
+                </div>
                 <Grid item xs={12}>
                     <Paper style={{padding: '16px', display: 'flex', overflow: 'auto', flexDirection: 'column'}}>
-                        <Title>{this.state.invoice.recipient.name}</Title>
+                        <Grid container spacing={1}>
+                            <Grid item sm={10}>
+                                <Title>{this.state.invoice.recipient.name}</Title>
+                            </Grid>
+                            <Grid item sm={1}>
+                                <Route render={({history}) => (
+                                    <Button color="primary" onClick={() => {history.push('edit/' + this.state.invoice.id)}}>
+                                        <Edit />
+                                    </Button>
+                                )} />
+                            </Grid>
+                            <Grid item sm={1}>
+                                {/* <Route render={({history}) => ( */}
+                                    {/* <Button color="primary" onClick={() => {history.push('edit/' + this.state.invoice.id)}}> */}
+                                    <Button color="primary" onClick={() => {this.saveButtonClicked()}}>
+                                        <DeleteForever />
+                                    </Button>
+                                {/* )} /> */}
+                            </Grid>
+                        </Grid>
                         <Typography variant="body2" gutterBottom>
                             {this.state.invoice.recipient.email}
                         </Typography>

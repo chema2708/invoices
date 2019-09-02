@@ -33,7 +33,6 @@ class Invoices extends React.Component {
   }
 
   getInvoices() {
-    console.log(this.state.pageNumber, this.state.pageSize);
     let requestString = 'http://localhost:3000/invoices?page_size=' + this.state.pageSize + '&page_number=' + this.state.pageNumber;
     axios.get(requestString)
     .then(response => {
@@ -42,8 +41,8 @@ class Invoices extends React.Component {
         invoice.totalBrutto = 0;
         invoice.totalNetto = 0;
         invoice.items.map(item => {
-          item.totalBrutto = item.qty * item.unitPriceNet;
-          item.totalNetto = item.totalBrutto * (1 + item.taxRate);
+          item.totalNetto = item.qty * item.unitPriceNet;
+          item.totalBrutto = item.totalNetto * (1 - item.taxRate);
           invoice.totalBrutto += item.totalBrutto;
           invoice.totalNetto += item.totalNetto;
         })
@@ -72,7 +71,7 @@ class Invoices extends React.Component {
               </TableHead>
               <TableBody>
                 {this.state.invoices.map(invoice => (
-                  <Route render={({ history }) => (
+                  <Route key={invoice.id} render={({ history }) => (
                     <TableRow key={invoice.id} hover onClick={() => {history.push('invoices/' + invoice.id)}}>
                       <TableCell>{invoice.createdDate}</TableCell>
                       <TableCell>{invoice.recipient.name}</TableCell>

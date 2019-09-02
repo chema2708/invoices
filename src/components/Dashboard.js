@@ -9,36 +9,16 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import { mainListItems, secondaryListItems } from './listItems';
-import Chart from './Chart';
-import Deposits from './Deposits';
+import { mainListItems } from './listItems';
 import Invoices from './Invoices';
 import InvoiceDetail from './InvoiceDetail';
+import InvoiceEdit from './InvoiceEdit';
+import InvoiceCreate from './InvoiceCreate';
 import { BrowserRouter as Router, Switch, Route} from 'react-router-dom';
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'. Built with '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Material-UI.
-      </Link>
-    </Typography>
-  );
-}
 
 const drawerWidth = 240;
 
@@ -130,7 +110,6 @@ export default function Dashboard() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   return (
     <Router>
@@ -148,13 +127,8 @@ export default function Dashboard() {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Dashboard
+              Invoice tracker
           </Typography>
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -171,48 +145,19 @@ export default function Dashboard() {
         </div>
         <Divider />
         <List>{mainListItems}</List>
-        <Divider />
-        <List>{secondaryListItems}</List>
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
-            {/* Chart */}
             <Switch>
-                <Route path="/dashboard" exact>
-                    <Grid item xs={12} md={8} lg={9}>
-                    <Paper className={fixedHeightPaper}>
-                        <Chart />
-                    </Paper>
-                    </Grid>
-                    {/* Recent Deposits */}
-                    <Grid item xs={12} md={4} lg={3}>
-                    <Paper className={fixedHeightPaper}>
-                        <Deposits />
-                    </Paper>
-                    </Grid>
-                </Route>
-                <Route path="/invoices" exact component={Invoices}>
-                    {/* Recent Invoices */}
-                    {/* <Grid item xs={12}>
-                    <Paper className={classes.paper}> */}
-                        {/* <Invoices /> */}
-                    {/* </Paper>
-                    </Grid> */}
-                </Route>
-                <Route path="/invoices/:id" exact component={InvoiceDetail}>
-                    {/* Recent Invoices */}
-                    {/* <Grid item xs={12}>
-                    <Paper className={classes.paper}> */}
-                        {/* <Invoices /> */}
-                    {/* </Paper>
-                    </Grid> */}
-                </Route>
+                <Route path="/invoices" exact component={Invoices}></Route>
+                <Route path="/invoices/:id" exact component={InvoiceDetail}></Route>
+                <Route path="/invoices/edit/:id" exact component={InvoiceEdit}></Route>
+                <Route path="/new-invoice" exact component={InvoiceCreate}></Route>
             </Switch>
           </Grid>
         </Container>
-        <Copyright />
       </main>
     </div>
     </Router>
